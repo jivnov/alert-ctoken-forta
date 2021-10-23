@@ -3,7 +3,7 @@ from web3 import Web3
 from src.const import CTOKEN_CONTRACTS, ABI
 import json
 
-priv_exchange_rate_list = []
+priv_exchange_rate_data = dict()
 ABI = json.loads(ABI)
 
 
@@ -35,7 +35,7 @@ def handle_transaction(transaction_event: TransactionEvent):
         return findings
     curr_exchange_rate = getExchangeRate(contract_address)
     if curr_exchange_rate > -1:
-        prev_exchange_rate = priv_exchange_rate_list[token_name]
+        prev_exchange_rate = priv_exchange_rate_data[token_name]
         if prev_exchange_rate is not None:
             if prev_exchange_rate > curr_exchange_rate:
                 findings.append(Finding({
@@ -49,6 +49,6 @@ def handle_transaction(transaction_event: TransactionEvent):
                         'currentRate': curr_exchange_rate
                     }
                 }))
-        priv_exchange_rate_list.append([token_name, curr_exchange_rate])
+        priv_exchange_rate_data[token_name] = curr_exchange_rate
 
     return findings
